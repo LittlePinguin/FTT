@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "61820323134",
+    "project_id": "fttdb-f8e14",
+    "storage_bucket": "fttdb-f8e14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61820323134:android:2a4b099305fd69699b186f",
+        "android_client_info": {
+          "package_name": "com.example.ftt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "61820323134-q2qtihi5huqjb4ffk2emfmnt42eupajd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM-55joa6suYot73ipGogZ8DhiXBfeodE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "61820323134-q2qtihi5huqjb4ffk2emfmnt42eupajd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
