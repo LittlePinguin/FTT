@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    tools:context=".mode_menu">
+
+    <Button
+        android:id="@+id/buttonback"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="229dp"
+        android:layout_marginRight="229dp"
+        android:background="@drawable/button_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonmute"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/buttonfilms"
+        android:layout_width="191dp"
+        android:layout_height="156dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="152dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_films" />
+
+    <ImageView
+        android:id="@+id/buttonseries"
+        android:layout_width="191dp"
+        android:layout_height="156dp"
+        android:layout_marginTop="152dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_series" />
+
+    <ImageView
+        android:id="@+id/buttonmangas"
+        android:layout_width="191dp"
+        android:layout_height="156dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="308dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_mangas" />
+
+    <ImageView
+        android:id="@+id/buttoncartoons"
+        android:layout_width="191dp"
+        android:layout_height="156dp"
+        android:layout_marginTop="308dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_cartoons" />
+
+    <ImageView
+        android:id="@+id/buttonmix"
+        android:layout_width="191dp"
+        android:layout_height="156dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="464dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_mix" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
