@@ -12,10 +12,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-public class nb_players extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class teams extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Button next, back;
     private int nbTeams;
@@ -24,23 +21,23 @@ public class nb_players extends AppCompatActivity implements AdapterView.OnItemS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_nb_players);
+        setContentView(R.layout.activity_teams);
 
         this.next = (Button)findViewById(R.id.buttonnext);
         this.back = (Button)findViewById(R.id.buttonback);
-
-        // Spinner settings
-        Spinner spinner = findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.numbers, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
 
         // Set variables
         ((globalTurn)this.getApplication()).setTurn(0);
         ((globalTurn)this.getApplication()).initRead();
         ((globalTurn)this.getApplication()).setEnd();
         ((globalTurn)getApplication()).setTimer();
+
+        // Spinner settings
+        Spinner spinner = findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
 
         // Go to mode selection
         next.setOnClickListener(new View.OnClickListener() {

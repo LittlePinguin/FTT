@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -31,7 +32,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+        // TODO : handle back or quit
+        // TODO : wifi
+        // TODO : hover button
 
         // Create the next level button, which tries to show an interstitial when clicked.
         /*mNextLevelButton = ((Button) findViewById(R.id.next_level_button));
@@ -54,12 +60,33 @@ public class MainActivity extends AppCompatActivity {
         // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
         //Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
 
+        // TODO  : music
+        /*// Background music settings
+        playmusic = MediaPlayer.create(getApplicationContext(),R.raw.adagio);
+        mute.setImageResource(R.drawable.soundconpng);
+        playmusic.start();*/
+
         this.mNextLevelButton = (Button) findViewById(R.id.buttonplay);
+
+        /*// Background music handler
+        mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (playmusic.isPlaying()){
+                    playmusic.pause();
+                    mute.setImageResource(R.drawable.muteicon);
+                }
+                else{
+                    playmusic.start();
+                    mute.setImageResource(R.drawable.soundconpng);
+                }
+            }
+        });*/
 
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent bouttonsuivant = new Intent(getApplicationContext(), nb_players.class);
+                Intent bouttonsuivant = new Intent(getApplicationContext(), teams.class);
                 startActivity(bouttonsuivant);
                 finish();
             }

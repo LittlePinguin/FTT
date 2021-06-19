@@ -3,9 +3,22 @@ package com.example.ftt;
 import android.app.Application;
 
 public class globalTurn extends Application {
-    int turn, end, nbTeams, type;
-    int [] points = new int[5];
+    int turn, end, nbTeams, type, timer;
+    int [] points = new int[6];
     int [] read = new int[19];
+    boolean gameCanceled;
+
+    void setTimer(){
+        this.timer = 1;
+    }
+
+    int getTimer(){
+        return this.timer;
+    }
+
+    void startTimer(){
+        this.timer = 0;
+    }
 
     int getTurn(){
         return turn;
@@ -53,7 +66,7 @@ public class globalTurn extends Application {
     }
 
     void initRead(){
-        for (int i=1; i<6; i++){
+        for (int i=1; i<19; i++){
             this.read[i] = 0;
         }
     }
@@ -71,15 +84,6 @@ public class globalTurn extends Application {
         }
     }
 
-    /*int searchRead(){
-        for (int i =1; i<this.read.length; i++){
-            if (this.read[i] == 0){
-                return 0;
-            }
-        }
-        return 1;
-    }*/
-
     void setNbTeams(int teams){
         this.nbTeams = teams;
     }
@@ -94,5 +98,17 @@ public class globalTurn extends Application {
 
     int getType(){
         return this.type;
+    }
+
+    void setGameCanceled(){
+        this.gameCanceled = false;
+    }
+
+    void gameIsCanceled(){
+        this.gameCanceled = true;
+    }
+
+    boolean getGameCanceled(){
+        return this.gameCanceled;
     }
 }
