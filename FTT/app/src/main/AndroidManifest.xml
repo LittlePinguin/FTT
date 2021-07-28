@@ -12,21 +12,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".scores"></activity>
-        <activity android:name=".nextTurn" />
-        <activity android:name=".game" />
-        <activity android:name=".mode_menu" />
-        <activity android:name=".nb_players" />
+        <activity android:name=".teams"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".scores"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".nextTurn"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".game"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".mode_menu"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".splash_screen"
-            android:label="FTT">
+            android:label="FTT"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Include the AdActivity configChanges and theme. -->
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
