@@ -28,13 +28,13 @@
 
     <ImageView
         android:id="@+id/buttonfilms"
-        android:layout_width="191dp"
-        android:layout_height="156dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="152dp"
+        android:layout_width="210dp"
+        android:layout_height="165dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="144dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_films" />
+        app:srcCompat="@drawable/button_films_state" />
 
     <ImageView
         android:id="@+id/buttonseries"
@@ -44,7 +44,7 @@
         android:layout_marginRight="20dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_series" />
+        app:srcCompat="@drawable/button_series_state" />
 
     <ImageView
         android:id="@+id/buttonmangas"
@@ -54,7 +54,7 @@
         android:layout_marginTop="308dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_mangas" />
+        app:srcCompat="@drawable/button_mangas_state" />
 
     <ImageView
         android:id="@+id/buttoncartoons"
@@ -64,7 +64,7 @@
         android:layout_marginRight="20dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_cartoons" />
+        app:srcCompat="@drawable/button_cartoons_state" />
 
     <ImageView
         android:id="@+id/buttonmix"
@@ -74,6 +74,6 @@
         android:layout_marginTop="464dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_mix" />
+        app:srcCompat="@drawable/button_mix_state" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
