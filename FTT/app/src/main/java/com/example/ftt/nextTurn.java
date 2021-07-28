@@ -3,7 +3,9 @@ package com.example.ftt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.WindowManager;
@@ -18,6 +20,8 @@ public class nextTurn extends AppCompatActivity {
     private String txt;
     private MediaPlayer mediaPlayer, playerEnd;
 
+    NetworkListener networkListener = new NetworkListener();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +30,6 @@ public class nextTurn extends AppCompatActivity {
 
         this.turnTxt = findViewById(R.id.turn);
         this.counter = findViewById(R.id.counter);
-
 
         // Get turn and increment
         turn = ((globalTurn)this.getApplication()).getTurn();
@@ -38,7 +41,6 @@ public class nextTurn extends AppCompatActivity {
         ((globalTurn)this.getApplication()).setTurn(nextTurn);
 
         mediaPlayer = MediaPlayer.create(nextTurn.this, R.raw.tick_tock_turn);
-        mediaPlayer.setLooping(true);
         playerEnd = MediaPlayer.create(nextTurn.this, R.raw.end_tick_tock);
 
         new CountDownTimer(4000, 1000){
@@ -55,14 +57,42 @@ public class nextTurn extends AppCompatActivity {
             @Override
             public void onFinish() {
                 mediaPlayer.stop();
+                mediaPlayer.reset();
+                mediaPlayer.release();
                 playerEnd.start();
                 Intent next = new Intent(getApplicationContext(), game.class);
                 randCards = randomCards.randomC(18);
                 next.putExtra("random", randCards);
                 ((globalTurn)getApplication()).setTimer();
                 startActivity(next);
+                overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                 finish();
             }
         }.start();
+        playerEnd.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC RING BELL RELEASE");
+                mp.reset();
+                mp.release();
+            }
+        });
     }
+
+    // Disable phone's back button
+    public void onBackPressed(){}
+
+    // Internet connection
+    /*@Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkListener, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkListener);
+        super.onStop();
+    }*/
 }

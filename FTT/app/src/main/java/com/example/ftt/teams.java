@@ -3,6 +3,9 @@ package com.example.ftt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +19,9 @@ public class teams extends AppCompatActivity implements AdapterView.OnItemSelect
 
     private Button next, back;
     private int nbTeams;
+    private MediaPlayer clickPlayer;
+
+    NetworkListener networkListener = new NetworkListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,11 +32,13 @@ public class teams extends AppCompatActivity implements AdapterView.OnItemSelect
         this.next = (Button)findViewById(R.id.buttonnext);
         this.back = (Button)findViewById(R.id.buttonback);
 
+        clickPlayer = MediaPlayer.create(teams.this, R.raw.button_click);
+
         // Set variables
         ((globalTurn)this.getApplication()).setTurn(0);
         ((globalTurn)this.getApplication()).initRead();
         ((globalTurn)this.getApplication()).setEnd();
-        ((globalTurn)getApplication()).setTimer();
+        ((globalTurn)this.getApplication()).setTimer();
 
         // Spinner settings
         Spinner spinner = findViewById(R.id.spinner);
@@ -44,10 +52,12 @@ public class teams extends AppCompatActivity implements AdapterView.OnItemSelect
             @Override
             public void onClick(View v) {
                 Intent nextP = new Intent(getApplicationContext(), mode_menu.class);
+                clickPlayer.start();
                 // Store nb teams
                 ((globalTurn)getApplication()).setNbTeams(nbTeams);
                 ((globalTurn)getApplication()).initPoints(nbTeams);
                 startActivity(nextP);
+                overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                 finish();
             }
         });
@@ -57,8 +67,18 @@ public class teams extends AppCompatActivity implements AdapterView.OnItemSelect
             @Override
             public void onClick(View v) {
                 Intent previousP = new Intent(getApplicationContext(), MainActivity.class);
+                clickPlayer.start();
                 startActivity(previousP);
+                overridePendingTransition(R.anim.transition_static_anim, R.anim.transition_zoom_out);
                 finish();
+            }
+        });
+        clickPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC CLICK RELEASE");
+                mp.reset();
+                mp.release();
             }
         });
     }
@@ -74,5 +94,24 @@ public class teams extends AppCompatActivity implements AdapterView.OnItemSelect
     public void onNothingSelected(AdapterView<?> parent) {
         Toast toast = Toast.makeText(getApplicationContext(), " Please select a number of teams.", Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    // Disable phone's back button
+    public void onBackPressed(){
+
+    }
+
+    // Internet connection
+    @Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkListener, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkListener);
+        super.onStop();
     }
 }

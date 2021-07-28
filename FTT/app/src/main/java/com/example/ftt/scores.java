@@ -3,7 +3,9 @@ package com.example.ftt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
@@ -14,9 +16,12 @@ public class scores extends AppCompatActivity {
 
     private static int TIME_OUT = 4000;
     private TextView t1, s1, t2, s2, t3, s3, t4, s4, textViewWinner;
-    private int nbTeams, score, winner;
+    private int nbTeams, score;
+    private int [] winner = new int[5];
     private  String txt;
     private MediaPlayer mediaPlayer;
+
+    NetworkListener networkListener = new NetworkListener();
 
 
     @Override
@@ -45,13 +50,27 @@ public class scores extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(scores.this, teams.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                 finish();
             }
         },TIME_OUT);
 
         // TODO : handle exequo
         winner = ((globalTurn)this.getApplication()).getWinner();
-        txt = "Team"+winner+" win !";
+        if (winner.length == 2){
+            txt = "Team"+winner[0]+" win !";
+        }
+        else {
+            for (int i=0; i<winner.length; i++){
+              if(i<winner.length-1){
+                  txt += "Team"+winner[i]+ " and ";
+              }
+              else {
+                  txt += "Team"+winner[i];
+              }
+            }
+            txt+= " win !";
+        }
         textViewWinner.setText(txt);
 
         for (int i=1; i<=nbTeams; i++){
@@ -75,5 +94,32 @@ public class scores extends AppCompatActivity {
                     break;
             }
         }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC WINNER RELEASE");
+                mp.reset();
+                mp.release();
+            }
+        });
+    }
+
+    // Disable phone's back button
+    public void onBackPressed(){
+
+    }
+
+    // Internet connection
+    @Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkListener, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkListener);
+        super.onStop();
     }
 }

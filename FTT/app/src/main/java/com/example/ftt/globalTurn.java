@@ -6,7 +6,7 @@ public class globalTurn extends Application {
     int turn, end, nbTeams, type, timer;
     int [] points = new int[6];
     int [] read = new int[19];
-    boolean gameCanceled;
+    boolean gameCanceled, btnClicked;
 
     void setTimer(){
         this.timer = 1;
@@ -42,15 +42,22 @@ public class globalTurn extends Application {
         this.points[team]+=1;
     }
 
-    int getWinner(){
-        int winner = 0, max = 0;
+    int [] getWinner(){
+        int winner = 0, max = 0, j=0;
+        int [] winners = new int[6];
         for (int i=1; i<this.points.length; i++){
-            if (max<this.points[i]){
+            if (max <= this.points[i]){
                 winner = i;
                 max = this.points[i];
             }
         }
-        return winner;
+        for (int i=1; i<this.points.length; i++){
+            if (i == winner){
+                winners[j] = this.points[i];
+                j++;
+            }
+        }
+        return winners;
     }
 
     void setEnd(){
@@ -110,5 +117,17 @@ public class globalTurn extends Application {
 
     boolean getGameCanceled(){
         return this.gameCanceled;
+    }
+
+    void setBtnClicked (){
+        this.btnClicked = false;
+    }
+
+    void btnIsClicked(){
+        this.btnClicked = true;
+    }
+
+    boolean getBtnClicked(){
+        return this.btnClicked;
     }
 }

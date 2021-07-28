@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -27,10 +29,12 @@ public class game extends AppCompatActivity {
     private int randCards, end, type, read, randWtBtn, randWgBtn, turn, randBtn1, randBtn2, randBtn3, randBtn4, randMix, timer, minutes, sec;
     public TextView synopsis, chrono;
     private Button buttonback, buttonAnswer1, buttonAnswer2, buttonAnswer3, buttonAnswer4;
-    private String story, name="", nameWrong, typeDB, timeFormat, txt;
+    private String story, name="", nameWrong, typeDB, timeFormat, timeLeft;
     private long time;
-    private Boolean backClicked;
-    private MediaPlayer mediaPlayer, playerEnd;
+    private Boolean backClicked, btnClicked;
+    private MediaPlayer playerEnd, clickPlayer, wrongPlayer, rightPlayer;
+
+    //NetworkListener networkListener = new NetworkListener();
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference root = db.getReference();
@@ -58,14 +62,21 @@ public class game extends AppCompatActivity {
         // Set to false button back clicked
         ((globalTurn)this.getApplication()).setGameCanceled();
 
+        ((globalTurn)this.getApplication()).setBtnClicked();
+
         // Get random card selected
         if (getIntent().hasExtra("random")) {
             randCards = getIntent().getIntExtra("random", 0);
         }
 
-        mediaPlayer = MediaPlayer.create(game.this, R.raw.tick_tock);
-        mediaPlayer.setLooping(true);
+        if (getIntent().hasExtra("time")) {
+            timeLeft = getIntent().getStringExtra("time");
+        }
+
         playerEnd = MediaPlayer.create(game.this, R.raw.end_tick_tock);
+        clickPlayer = MediaPlayer.create(game.this, R.raw.button_click);
+        rightPlayer = MediaPlayer.create(game.this, R.raw.right_answer);
+        wrongPlayer = MediaPlayer.create(game.this, R.raw.wrong_answer);
 
         // Timer settings
         CountDownTimer ct = new CountDownTimer(15000, 1000){
@@ -75,30 +86,33 @@ public class game extends AppCompatActivity {
                 minutes = (int)(time/1000)/60;
                 sec = (int)(time/1000)%60;
                 timeFormat = String.format(Locale.getDefault(), "\n\n%02d:%02d", minutes, sec);
-                mediaPlayer.start();
                 //System.out.println("####################################### TIME ON TICK = "+timeFormat);
                 chrono.setText(timeFormat);
                 chrono.setTextColor(Color.BLACK);
                 if (time <= 10000){
                     chrono.setTextColor(Color.RED);
-                    //mediaPlayer.stop();
-                    //playerFast.start();
                 }
                 end = ((globalTurn)getApplication()).getEnd();
-                if (end == 10){
-                    mediaPlayer.stop();
+                backClicked = ((globalTurn)getApplication()).getGameCanceled();
+                btnClicked = ((globalTurn)getApplication()).getBtnClicked();
+                if (end == 10 || backClicked){
                     playerEnd.start();
-                    Intent timesup = new Intent(getApplicationContext(), scores.class);
                     System.out.println("************************************** CHRONO CANCELED END ON TICK");
+                    System.out.println("************************************** BACK BUTTON CLICKED : "+backClicked);
                     this.cancel();
-                    startActivity(timesup);
+                }
+                if (btnClicked){
+                    Intent next = new Intent(getApplicationContext(), game.class);
+                    randCards = randomCards.randomC(18);
+                    next.putExtra("random", randCards);
+                    next.putExtra("time", timeFormat);
+                    startActivity(next);
+                    overridePendingTransition(0,0);
                     finish();
                 }
             }
             @Override
             public void onFinish() {
-                //playerFast.stop();
-                mediaPlayer.stop();
                 playerEnd.start();
                 end = ((globalTurn)getApplication()).getEnd();
                 backClicked = ((globalTurn)getApplication()).getGameCanceled();
@@ -112,7 +126,6 @@ public class game extends AppCompatActivity {
                 else{
                     if (backClicked){
                         Intent cancelGame = new Intent(getApplicationContext(), teams.class);
-                        System.out.println("************************************** BACK BUTTON CLICKED : "+backClicked);
                         this.cancel();
                         startActivity(cancelGame);
                         finish();
@@ -135,7 +148,8 @@ public class game extends AppCompatActivity {
         }
 
         // TODO : Display chrono
-
+        chrono.setText(timeLeft);
+        chrono.setTextColor(Color.BLACK);
 
         // Get type cards
         type = ((globalTurn)this.getApplication()).getType();
@@ -304,7 +318,13 @@ public class game extends AppCompatActivity {
             public void onClick(View v) {
                 // Increment points to team
                 if (randWtBtn == 1){
+                    rightPlayer.start();
+                    synopsis.setTextColor(0xFF12DC0C);
                     ((globalTurn)getApplication()).addPoints(turn);
+                }
+                else {
+                    wrongPlayer.start();
+                    synopsis.setTextColor(Color.RED);
                 }
                 // Increment number of card read
                 ((globalTurn)getApplication()).addEnd();
@@ -314,14 +334,18 @@ public class game extends AppCompatActivity {
                     Intent endGame = new Intent(getApplicationContext(), scores.class);
                     ct.cancel();
                     startActivity(endGame);
+                    overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                     finish();
                 }
                 else {
-                    Intent next = new Intent(getApplicationContext(), game.class);
+                    /*Intent next = new Intent(getApplicationContext(), game.class);
                     randCards = randomCards.randomC(18);
                     next.putExtra("random", randCards);
+                    overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                     startActivity(next);
-                    finish();
+                    overridePendingTransition(0,0);
+                    finish();*/
+                    ((globalTurn)getApplication()).btnIsClicked();
                 }
             }
         });
@@ -330,7 +354,13 @@ public class game extends AppCompatActivity {
             public void onClick(View v) {
                 // Increment points to team
                 if (randWtBtn == 2){
+                    rightPlayer.start();
+                    synopsis.setTextColor(0xFF12DC0C);
                     ((globalTurn)getApplication()).addPoints(turn);
+                }
+                else {
+                    wrongPlayer.start();
+                    synopsis.setTextColor(Color.RED);
                 }
                 ((globalTurn)getApplication()).addEnd();
                 // If players read 20 cards end of game
@@ -339,6 +369,7 @@ public class game extends AppCompatActivity {
                     Intent endGame = new Intent(getApplicationContext(), scores.class);
                     ct.cancel();
                     startActivity(endGame);
+                    overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                     finish();
                 }
                 else {
@@ -346,6 +377,7 @@ public class game extends AppCompatActivity {
                     randCards = randomCards.randomC(18);
                     next.putExtra("random", randCards);
                     startActivity(next);
+                    overridePendingTransition(0,0);
                     finish();
                 }
             }
@@ -355,7 +387,13 @@ public class game extends AppCompatActivity {
             public void onClick(View v) {
                 // Increment points to team
                 if (randWtBtn == 3){
+                    rightPlayer.start();
+                    synopsis.setTextColor(0xFF12DC0C);
                     ((globalTurn)getApplication()).addPoints(turn);
+                }
+                else {
+                    wrongPlayer.start();
+                    synopsis.setTextColor(Color.RED);
                 }
                 ((globalTurn)getApplication()).addEnd();
                 // If players read 20 cards end of game
@@ -364,6 +402,7 @@ public class game extends AppCompatActivity {
                     Intent endGame = new Intent(getApplicationContext(), scores.class);
                     ct.cancel();
                     startActivity(endGame);
+                    overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                     finish();
                 }
                 else {
@@ -371,6 +410,7 @@ public class game extends AppCompatActivity {
                     randCards = randomCards.randomC(18);
                     next.putExtra("random", randCards);
                     startActivity(next);
+                    overridePendingTransition(0,0);
                     finish();
                 }
             }
@@ -380,7 +420,13 @@ public class game extends AppCompatActivity {
             public void onClick(View v) {
                 // Increment points to team
                 if (randWtBtn == 4){
+                    rightPlayer.start();
+                    synopsis.setTextColor(0xFF12DC0C);
                     ((globalTurn)getApplication()).addPoints(turn);
+                }
+                else {
+                    wrongPlayer.start();
+                    synopsis.setTextColor(Color.RED);
                 }
                 ((globalTurn)getApplication()).addEnd();
                 // If players read 20 cards end of game
@@ -389,6 +435,7 @@ public class game extends AppCompatActivity {
                     Intent endGame = new Intent(getApplicationContext(), scores.class);
                     ct.cancel();
                     startActivity(endGame);
+                    overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                     finish();
                 }
                 else {
@@ -396,6 +443,7 @@ public class game extends AppCompatActivity {
                     randCards = randomCards.randomC(18);
                     next.putExtra("random", randCards);
                     startActivity(next);
+                    overridePendingTransition(0,0);
                     finish();
                 }
             }
@@ -405,11 +453,46 @@ public class game extends AppCompatActivity {
         buttonback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clickPlayer.start();
                 Intent backP = new Intent(getApplicationContext(), teams.class);
                 ((globalTurn)getApplication()).gameIsCanceled();
                 ct.cancel();
                 startActivity(backP);
+                overridePendingTransition(R.anim.transition_static_anim, R.anim.transition_zoom_out);
                 finish();
+            }
+        });
+
+        playerEnd.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC END RELEASE");
+                mp.reset();
+                mp.release();
+            }
+        });
+        rightPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC RIGHT RELEASE");
+                mp.reset();
+                mp.release();
+            }
+        });
+        wrongPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC WRONG RELEASE");
+                mp.reset();
+                mp.release();
+            }
+        });
+        clickPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC CLICK RELEASE");
+                mp.reset();
+                mp.release();
             }
         });
     }
@@ -445,4 +528,23 @@ public class game extends AppCompatActivity {
             }
         });
     }
+
+    // Disable phone's back button
+    public void onBackPressed(){
+
+    }
+
+    // Internet connection
+    /*@Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkListener, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkListener);
+        super.onStop();
+    }*/
 }

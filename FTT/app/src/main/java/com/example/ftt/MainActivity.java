@@ -4,7 +4,12 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,9 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int START_LEVEL = 1;
     private int mLevel;
-    private Button mNextLevelButton;
+    private Button mNextLevelButton, btnTuto;
     private InterstitialAd mInterstitialAd;
     private TextView mLevelTextView;
+    private MediaPlayer clickPlayer;
+
+    NetworkListener networkListener = new NetworkListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +43,11 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        // TODO : handle back or quit
-        // TODO : wifi
-        // TODO : hover button
+        // TODO : maj prevent apk from running in background
+        // TODO : maj handle wifi game + nextTurn
+        // TODO : song bug
+        // TODO : maj bug button back if don't click on answer button before
+        // TODO : bug when play and then quit go to game empty page ---> song bug ?
 
         // Create the next level button, which tries to show an interstitial when clicked.
         /*mNextLevelButton = ((Button) findViewById(R.id.next_level_button));
@@ -60,35 +70,38 @@ public class MainActivity extends AppCompatActivity {
         // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
         //Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
 
-        // TODO  : music
-        /*// Background music settings
-        playmusic = MediaPlayer.create(getApplicationContext(),R.raw.adagio);
-        mute.setImageResource(R.drawable.soundconpng);
-        playmusic.start();*/
 
         this.mNextLevelButton = (Button) findViewById(R.id.buttonplay);
+        //this.btnTuto = findViewById(R.id.buttontuto);
 
-        /*// Background music handler
-        mute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (playmusic.isPlaying()){
-                    playmusic.pause();
-                    mute.setImageResource(R.drawable.muteicon);
-                }
-                else{
-                    playmusic.start();
-                    mute.setImageResource(R.drawable.soundconpng);
-                }
-            }
-        });*/
+        clickPlayer = MediaPlayer.create(MainActivity.this, R.raw.button_click);
 
         mNextLevelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent bouttonsuivant = new Intent(getApplicationContext(), teams.class);
+                clickPlayer.start();
                 startActivity(bouttonsuivant);
+                overridePendingTransition(R.anim.transition_zoom_in, R.anim.transition_static_anim);
                 finish();
+            }
+        });
+
+        /*btnTuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickPlayer.start();
+                finish();
+                System.exit(0);
+            }
+        });*/
+
+        clickPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("************************************** MUSIC CLICK RELEASE");
+                mp.reset();
+                mp.release();
             }
         });
     }
@@ -160,5 +173,19 @@ public class MainActivity extends AppCompatActivity {
         mLevelTextView.setText("Level " + (++mLevel));
         mInterstitialAd = newInterstitialAd();
         loadInterstitial();
+    }
+
+    // Internet connection
+    @Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkListener, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkListener);
+        super.onStop();
     }
 }
