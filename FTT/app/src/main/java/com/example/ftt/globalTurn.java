@@ -2,6 +2,7 @@ package com.example.ftt;
 
 import android.app.Application;
 
+// Global variables
 public class globalTurn extends Application {
     int turn, end, nbTeams, type, timer;
     int [] points = new int[6];
